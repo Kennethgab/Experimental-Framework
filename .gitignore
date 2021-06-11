@@ -8,4 +8,5 @@
 .DS_Store
 env
 .svn
-.hg
+.h
+test_results

@@ -1,5 +1,6 @@
 import serial, time
 import yaml
+import os
 
 from serial.serialwin32 import Serial
 
@@ -24,7 +25,7 @@ def write_logfile(header: dict[str, str], content: list[str]):
     device = header["device"]
     log_type = header["log_type"]
     print(f"Writing log {log_type} for device {device}")
-    with open(f"{device}_{log_type}.log", "w") as f:
+    with open(f"{result_dir}/{device}_{log_type}.log", "w") as f:
         f.write("---\n")
         f.write(yaml.dump(header))
         f.write("...\n")
@@ -76,7 +77,12 @@ class SerialLogger:
                 self.current_content.append(line)
 
 
+result_dir = "./test_results"
 if __name__ == "__main__":
+
+    if not os.path.exists(result_dir):
+        os.makedirs(result_dir)
+
     ser = serial.Serial("COM3", baudrate=115200)
     logger = SerialLogger(ser)
     logger.log_all()
