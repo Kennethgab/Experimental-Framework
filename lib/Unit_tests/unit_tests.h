@@ -4,17 +4,7 @@
 #include <Hash.h>
 #include <GCM.h>
 #include <AES.h>
-
-class TestablePrimitive {
-private:
-public:
-  size_t samples                  = 0;
-  bool verbose_sampling           = false;
-  virtual float TimingPrimitive() = 0;
-  virtual bool TestingPrimitive() = 0;
-  void set_samples(size_t samples) { this->samples = samples; }
-  void set_verbose_sampling(bool verbose) { this->verbose_sampling = verbose; }
-};
+#include <SerialLogWriter.h>
 
 class TestableRNG : public TestablePrimitive {
 private:
@@ -22,7 +12,8 @@ private:
 
 public:
   TestableRNG(size_t buffer_size);
-  virtual float TimingPrimitive();
+  virtual float TimingPrimitive(SerialLogWriter *logger, size_t samples,
+                                bool verbose_sampling);
   virtual bool TestingPrimitive();
 };
 
@@ -33,11 +24,14 @@ private:
   size_t output_size;
   char *expected_hash_hex;
   char *input;
+  char *log_type;
 
 public:
-  TestableHashing(Hash *hash, size_t input_size, size_t output_size, char *input, char *expected_hash_hex);
+  TestableHashing(char *log_type, Hash *hash, size_t input_size,
+                  size_t output_size, char *input, char *expected_hash_hex);
   virtual bool TestingPrimitive();
-  virtual float TimingPrimitive();
+  virtual float TimingPrimitive(SerialLogWriter *logger, size_t samples,
+                                bool verbose_sampling);
 };
 
 class TestableAesGcm256 : public TestablePrimitive {
@@ -51,11 +45,13 @@ private:
 
 public:
   // used for testing
-  TestableAesGcm256(char *privkey_hex, char *nonce_hex, char *input_hex, char *expected_output_hex, char *expected_tag_hex);
+  TestableAesGcm256(char *privkey_hex, char *nonce_hex, char *input_hex,
+                    char *expected_output_hex, char *expected_tag_hex);
   // used for timing with random values,
   TestableAesGcm256() = default;
   virtual bool TestingPrimitive();
-  virtual float TimingPrimitive();
+  virtual float TimingPrimitive(SerialLogWriter *logger, size_t samples,
+                                bool verbose_sampling);
 };
 
 class TestableElliptic : public TestablePrimitive {
@@ -66,9 +62,11 @@ private:
   const struct uECC_Curve_t *curve;
 
 public:
-  TestableElliptic(const struct uECC_Curve_t *curve, size_t privkey_size, size_t pubkey_size, size_t secret_size);
+  TestableElliptic(const struct uECC_Curve_t *curve, size_t privkey_size,
+                   size_t pubkey_size, size_t secret_size);
   virtual bool TestingPrimitive();
-  virtual float TimingPrimitive();
+  virtual float TimingPrimitive(SerialLogWriter *logger, size_t samples,
+                                bool verbose_sampling);
 };
 
 class TestableXOR : public TestablePrimitive {
@@ -77,8 +75,9 @@ private:
 
 public:
   TestableXOR(size_t buffer_size);
-  virtual float TimingPrimitive();
   virtual bool TestingPrimitive();
+  virtual float TimingPrimitive(SerialLogWriter *logger, size_t samples,
+                                bool verbose_sampling);
 };
 
 #endif

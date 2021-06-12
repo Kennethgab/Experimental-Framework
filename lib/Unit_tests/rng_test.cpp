@@ -3,12 +3,19 @@
 #include <utility.h>
 #include <unit_tests.h>
 
-TestableRNG::TestableRNG(size_t buffer_size) { this->buffer_size = buffer_size; }
+TestableRNG::TestableRNG(size_t buffer_size) {
+  this->buffer_size = buffer_size;
+}
 
-float TestableRNG::TimingPrimitive() {
+float TestableRNG::TimingPrimitive(SerialLogWriter *logger, size_t samples,
+                                   bool verbose_sampling) {
   long start, end, execution_time;
   float avg;
   long total = 0;
+  if (verbose_sampling) {
+    PrintSimpleHeader(logger, "rng_256", samples);
+    PrintSimpleColumns(logger);
+  }
   for (size_t i = 0; i < samples; i++) {
     RNG.loop();
     start = micros();
@@ -18,10 +25,13 @@ float TestableRNG::TimingPrimitive() {
     execution_time = end - start;
     total += execution_time;
     if (verbose_sampling) {
-      FormatPrint("%-7d | %7d\n", i + 1, execution_time);
+      PrintSimpleRow(logger, i + 1, execution_time);
     }
   }
   avg = total / (float)samples;
+  if (!verbose_sampling) {
+    PrintSimpleAvg(logger, "rng_256", avg);
+  }
   return avg;
 }
 

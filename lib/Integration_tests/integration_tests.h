@@ -17,7 +17,8 @@ private:
 public:
   TestableEcies(const struct uECC_Curve_t* curve);
   virtual bool TestingPrimitive();
-  virtual float TimingPrimitive();
+  virtual float TimingPrimitive(SerialLogWriter* logger, size_t samples,
+                                bool verbose_sampling);
 };
 
 class TestableHashXor : public TestablePrimitive {
@@ -31,7 +32,8 @@ private:
 public:
   TestableHashXor();
   virtual bool TestingPrimitive();
-  virtual float TimingPrimitive();
+  virtual float TimingPrimitive(SerialLogWriter* logger, size_t samples,
+                                bool verbose_sampling);
   void ResetRnd();
   void ResetInitial();
 };

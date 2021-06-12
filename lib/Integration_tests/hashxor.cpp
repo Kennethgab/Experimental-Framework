@@ -34,13 +34,17 @@ bool TestableHashXor::TestingPrimitive() {
   return true;
 }
 
-float TestableHashXor::TimingPrimitive() {
+float TestableHashXor::TimingPrimitive(SerialLogWriter *logger, size_t samples,
+                                       bool verbose_sampling) {
   long start, end, execution_time;
   float avg;
   long total = 0;
   SHA256 hash1;
   SHA3_256 hash2;
-
+  if (verbose_sampling) {
+    PrintSimpleHeader(logger, "hashxor", samples);
+    PrintSimpleColumns(logger);
+  }
   for (int i = 0; i < samples; i++) {
     ResetInitial();
     start = micros();
@@ -62,9 +66,12 @@ float TestableHashXor::TimingPrimitive() {
     execution_time = end - start;
     total += execution_time;
     if (verbose_sampling) {
-      FormatPrint("%-7d | %7d\n", i + 1, execution_time);
+      PrintSimpleRow(logger, i + 1, execution_time);
     }
   }
   avg = total / (float)samples;
+  if (!verbose_sampling) {
+    PrintSimpleAvg(logger, "hashxor", avg);
+  }
   return avg;
 }

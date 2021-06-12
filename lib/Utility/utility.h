@@ -2,9 +2,7 @@
 #ifndef UTILITY_h
 #define UTILITY_h
 #include <RNG.h>
-
 #include <Arduino.h>
-#include <unit_tests.h>
 #define XSTR(x) #x
 #define STR(x) XSTR(x)
 
@@ -28,28 +26,10 @@ void FormatPrint(const char *str, T... args) {
   }
 }
 typedef float (*timed_func)(size_t, size_t, bool);
-extern void LogTemplate(TestablePrimitive *timed_primitive, const char *log_type, size_t samples, bool include_samples);
 static int RandomVal(uint8_t *dest, size_t buffer_size) {
   RNG.rand(dest, buffer_size);
   RNG.loop();
   return 1;
 }
 
-class SerialLogWriter {
-private:
-  size_t samples;
-  char *device_name;
-  char *log_type;
-  void PrintTableDelimiter();
-  void LogStart();
-  void LogResults(float avg);
-  void LogEnd(float avg);
-  bool verbose_sampling;
-
-public:
-  SerialLogWriter(size_t samples, bool verbose_sampling);
-  void LogPrimitive(TestablePrimitive *timed_primitive, char *log_type);
-  void set_samples(size_t samples);
-  void set_verbose_sampling(bool verbose);
-};
 #endif

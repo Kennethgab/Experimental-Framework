@@ -2,13 +2,20 @@
 #include <integration_tests.h>
 #include <kdf.h>
 
-TestableEcies::TestableEcies(const struct uECC_Curve_t* curve) { this->curve = curve; }
+TestableEcies::TestableEcies(const struct uECC_Curve_t* curve) {
+  this->curve = curve;
+}
 
-float TestableEcies::TimingPrimitive() {
+float TestableEcies::TimingPrimitive(SerialLogWriter* logger, size_t samples,
+                                     bool verbose_sampling) {
   uECC_set_rng(&RandomVal);
   long start, end, execution_time;
   float avg;
   long total = 0;
+  if (verbose_sampling) {
+    PrintSimpleHeader(logger, "ecies", samples);
+    PrintSimpleColumns(logger);
+  }
   byte permanent_pubkey[64], permanent_privkey[32], message[8], ciphertext[8];
   RNG.rand(message, 8);
   uECC_make_key(permanent_pubkey, permanent_privkey, curve);
@@ -20,7 +27,8 @@ float TestableEcies::TimingPrimitive() {
     byte nonce[16], tag[16];
     RNG.rand(nonce, 16);
     uECC_make_key(ephemeral_pubkey, ephemeral_privkey, curve);
-    uECC_shared_secret(permanent_pubkey, ephemeral_privkey, shared_secret, curve);
+    uECC_shared_secret(permanent_pubkey, ephemeral_privkey, shared_secret,
+                       curve);
     hash.update(shared_secret, 32);
     hash.finalize(shared_secret, 32);
     gcm.setIV(nonce, 16);
@@ -32,16 +40,21 @@ float TestableEcies::TimingPrimitive() {
     execution_time = end - start;
     total += execution_time;
     if (verbose_sampling) {
-      FormatPrint("%-7d | %7d\n", i + 1, execution_time);
+      PrintSimpleRow(logger, i + 1, execution_time);
     }
   }
   avg = total / (float)samples;
+  if (!verbose_sampling) {
+    PrintSimpleAvg(logger, "ecies", avg);
+  }
   return avg;
 }
 
 bool TestableEcies::TestingPrimitive() {
-  byte permanent_pubkey[64], permanent_privkey[32], ephemeral_privkey[32], ephemeral_pubkey[64];
-  byte shared_secret_permanent[32], shared_secret_ephemeral[32], nonce[16], tag[16];
+  byte permanent_pubkey[64], permanent_privkey[32], ephemeral_privkey[32],
+      ephemeral_pubkey[64];
+  byte shared_secret_permanent[32], shared_secret_ephemeral[32], nonce[16],
+      tag[16];
   byte message[16];
   byte ciphertext[16];
   byte plaintext[16];
@@ -51,14 +64,14 @@ bool TestableEcies::TestingPrimitive() {
   RNG.rand(nonce, 16);
   RNG.rand(message, 16);
   // shared secret generation
-  uECC_shared_secret(permanent_pubkey, ephemeral_privkey, shared_secret_ephemeral, curve);
-  uECC_shared_secret(ephemeral_pubkey, permanent_privkey, shared_secret_permanent, curve);
+  uECC_shared_secret(permanent_pubkey, ephemeral_privkey,
+                     shared_secret_ephemeral, curve);
+  uECC_shared_secret(ephemeral_pubkey, permanent_privkey,
+                     shared_secret_permanent, curve);
 
   // hash shared secret using HKDF-SHA256 // rfc
-  HexPrint(shared_secret_permanent, 32);
   hkdf_sha256_simple(shared_secret_ephemeral, 32, shared_secret_ephemeral, 32);
   hkdf_sha256_simple(shared_secret_permanent, 32, shared_secret_permanent, 32);
-  HexPrint(shared_secret_permanent, 32);
   // hash.clear();
   // hash.update(shared_secret_ephemeral, 32);
   // hash.finalize(shared_secret_ephemeral, 32);

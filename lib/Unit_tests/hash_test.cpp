@@ -4,12 +4,15 @@
 #include <unit_tests.h>
 #include <Hash.h>
 
-TestableHashing::TestableHashing(Hash *hash, size_t input_size, size_t output_size, char *input, char *expected_hash_hex) {
+TestableHashing::TestableHashing(char *log_type, Hash *hash, size_t input_size,
+                                 size_t output_size, char *input,
+                                 char *expected_hash_hex) {
   this->hash              = hash;
   this->input_size        = input_size;
   this->output_size       = output_size;
   this->input             = input;
   this->expected_hash_hex = expected_hash_hex;
+  this->log_type          = log_type;
 }
 
 bool TestableHashing::TestingPrimitive() {
@@ -22,10 +25,15 @@ bool TestableHashing::TestingPrimitive() {
   return EqualBuffer(hash_buffer, expected_hash_buffer, output_size);
 }
 
-float TestableHashing::TimingPrimitive() {
+float TestableHashing::TimingPrimitive(SerialLogWriter *logger, size_t samples,
+                                       bool verbose_sampling) {
   byte random_buffer[input_size];
   long start, end, execution_time;
   float avg;
+  if (verbose_sampling) {
+    PrintSimpleHeader(logger, log_type, samples);
+    PrintSimpleColumns(logger);
+  }
   long total = 0;
   for (size_t i = 0; i < samples; i++) {
     RNG.loop();
@@ -39,9 +47,12 @@ float TestableHashing::TimingPrimitive() {
     execution_time = end - start;
     total += execution_time;
     if (verbose_sampling) {
-      FormatPrint("%-7d | %7d\n", i + 1, execution_time);
+      PrintSimpleRow(logger, i + 1, execution_time);
     }
   }
   avg = total / (float)samples;
+  if (!verbose_sampling) {
+    PrintSimpleAvg(logger, log_type, avg);
+  }
   return avg;
 }
