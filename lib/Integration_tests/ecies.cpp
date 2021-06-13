@@ -1,6 +1,5 @@
 #include <unit_tests.h>
 #include <integration_tests.h>
-#include <kdf.h>
 
 TestableEcies::TestableEcies(const struct uECC_Curve_t* curve) {
   this->curve = curve;
@@ -69,16 +68,13 @@ bool TestableEcies::TestingPrimitive() {
   uECC_shared_secret(ephemeral_pubkey, permanent_privkey,
                      shared_secret_permanent, curve);
 
-  // hash shared secret using HKDF-SHA256 // rfc
-  hkdf_sha256_simple(shared_secret_ephemeral, 32, shared_secret_ephemeral, 32);
-  hkdf_sha256_simple(shared_secret_permanent, 32, shared_secret_permanent, 32);
-  // hash.clear();
-  // hash.update(shared_secret_ephemeral, 32);
-  // hash.finalize(shared_secret_ephemeral, 32);
-  // hash.clear();
-  // hash.update(shared_secret_permanent, 32);
-  // hash.finalize(shared_secret_permanent, 32);
-  // hash.clear();
+  hash.clear();
+  hash.update(shared_secret_ephemeral, 32);
+  hash.finalize(shared_secret_ephemeral, 32);
+  hash.clear();
+  hash.update(shared_secret_permanent, 32);
+  hash.finalize(shared_secret_permanent, 32);
+  hash.clear();
 
   if (!EqualBuffer(shared_secret_permanent, shared_secret_ephemeral, 32)) {
     return false;

@@ -12,11 +12,11 @@ void setup() {
   Serial.begin(115200);
   while (!Serial)  // wait for Serial to be ready
     ;
-
+  Serial.print("\n\n");
   asm(".global _printf_float");  // enable float printf s for arduino
   InitializeRNG();
 
-  bool verbose_sampling = false;
+  bool verbose_sampling = true;
   size_t samples        = 100;
   char* delimiter       = ",";
 
@@ -61,7 +61,6 @@ void setup() {
   TestablePrimitive* logged_primitives[] = {
       xor_test,       rng_test,       sha256_test, sha3_256_test,
       secp256r1_test, aesgcm256_test, ecies_test,  hashxor_test};
-
   const size_t test_len =
       sizeof(logged_primitives) / sizeof(logged_primitives[0]);
 

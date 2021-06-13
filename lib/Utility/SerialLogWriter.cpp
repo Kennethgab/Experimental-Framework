@@ -30,13 +30,13 @@ void SerialLogWriter::PrintHeaders(Header *headers, size_t len) {
     Header *def_ptr = default_headers;
     for (size_t i = 0; i < default_header_len; i++, def_ptr++) {
       Header def_header = *def_ptr;
-      FormatPrint("%s: %s\n", def_header.key, def_header.value);
+      FormatPrint("\"%s\": \"%s\"\n", def_header.key, def_header.value);
     }
   }
   // print specific headers
   for (size_t i = 0; i < len; i++, headers++) {
     Header header = *headers;
-    FormatPrint("%s: %s\n", header.key, header.value);
+    FormatPrint("\"%s\": \"%s\"\n", header.key, header.value);
   }
   Serial.print("...\n");
 }
