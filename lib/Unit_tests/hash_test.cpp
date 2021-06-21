@@ -1,8 +1,4 @@
-#include <Arduino.h>
-#include <utility.h>
-#include <RNG.h>
 #include <unit_tests.h>
-#include <Hash.h>
 
 TestableHashing::TestableHashing(char *log_type, Hash *hash, size_t input_size,
                                  size_t output_size, char *input,

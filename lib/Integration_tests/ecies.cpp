@@ -1,5 +1,6 @@
 #include <unit_tests.h>
 #include <integration_tests.h>
+#include <rand.h>
 
 TestableEcies::TestableEcies(const struct uECC_Curve_t* curve) {
   this->curve = curve;

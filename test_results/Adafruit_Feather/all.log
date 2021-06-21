@@ -1,0 +1,15 @@
+---
+"delimiter": ","
+"device": "Adafruit Feather"
+"log_type": "all"
+"samples": "100"
+...
+primitive,AVG time [microseconds]
+xor_256,3
+rng_256,31
+sha2_256,26
+sha3_256,184
+secp256r1_ecc_dh,169814
+aes256_gcm,144
+ecies,169996
+hashxor,289

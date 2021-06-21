@@ -1,0 +1,15 @@
+---
+"delimiter": ","
+"device": "Arduino Nano 33 IoT"
+"log_type": "all"
+"samples": "100"
+...
+primitive,AVG time [microseconds]
+xor_256,11
+rng_256,170
+sha2_256,264
+sha3_256,1337
+secp256r1_ecc_dh,781112
+aes256_gcm,2550
+ecies,783632
+hashxor,2181

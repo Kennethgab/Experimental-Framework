@@ -1,0 +1,15 @@
+---
+"delimiter": ","
+"device": "Adafruit Huzzah"
+"log_type": "all"
+"samples": "100"
+...
+primitive,AVG time [microseconds]
+xor_256,6
+rng_256,85
+sha2_256,85
+sha3_256,550
+secp256r1_ecc_dh,977576
+aes256_gcm,1027
+ecies,979128
+hashxor,833

@@ -1,3 +1,4 @@
+#ifndef SIMPLE_MAIN
 #ifndef UNIT_h
 #define UNIT_h
 #include <RNG.h>
@@ -29,6 +30,25 @@ private:
 public:
   TestableHashing(char *log_type, Hash *hash, size_t input_size,
                   size_t output_size, char *input, char *expected_hash_hex);
+  virtual bool TestingPrimitive();
+  virtual float TimingPrimitive(SerialLogWriter *logger, size_t samples,
+                                bool verbose_sampling);
+};
+
+class TestableAES : public TestablePrimitive {
+private:
+  AES256 aes;
+  char *privkey_hex;
+  char *input_raw;
+  char *expected_output_hex;
+  bool time_encryption;
+
+public:
+  // timing constructor
+  TestableAES(bool time_encryption);
+  // testing constructor
+  TestableAES(char *privkey_hex, char *input_raw, char *expected_output_hex);
+
   virtual bool TestingPrimitive();
   virtual float TimingPrimitive(SerialLogWriter *logger, size_t samples,
                                 bool verbose_sampling);
@@ -80,4 +100,5 @@ public:
                                 bool verbose_sampling);
 };
 
+#endif
 #endif

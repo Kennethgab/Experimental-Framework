@@ -1,7 +1,8 @@
-#include <Arduino.h>
+
 #include <uECC.h>
 #include <unit_tests.h>
-#include <utility.h>
+#include <Crypto.h>
+#include <rand.h>
 
 TestableElliptic::TestableElliptic(const struct uECC_Curve_t *curve,
                                    size_t privkey_size, size_t pubkey_size,

@@ -1,7 +1,7 @@
+#ifndef SIMPLE_MAIN
 #ifndef INTEGRATION_h
 #define INTEGRATION_h
-#include <Arduino.h>
-#include <utility.h>
+
 #include <unit_tests.h>
 #include <uECC.h>
 #include <SHA256.h>
@@ -38,4 +38,13 @@ public:
   void ResetInitial();
 };
 
+class TestableNewHope : public TestablePrimitive {
+public:
+  TestableNewHope() = default;
+  virtual bool TestingPrimitive();
+  virtual float TimingPrimitive(SerialLogWriter* logger, size_t samples,
+                                bool verbose_sampling);
+};
+
+#endif
 #endif
