@@ -72,11 +72,11 @@ void SerialLogWriter::PrintRow(const char **row, size_t len)
  *
  *
  */
-void SerialLogWriter::PrintHeaders(Header *headers, size_t len)
+void SerialLogWriter::PrintHeaders(Header *headers, size_t len, bool print_default)
 {
   Serial.print("---\n");
   // print default headers
-  if (default_headers != NULL)
+  if (default_headers != NULL && print_default)
   {
     Header *def_ptr = default_headers;
     for (size_t i = 0; i < default_header_len; i++, def_ptr++)
@@ -144,7 +144,7 @@ void PrintSimpleAvg(SerialLogWriter *logger, const char *log_type, float avg)
 }
 
 /**
- *  \brief Prints simple headers used for basic benchmarking
+ *  \brief Prints simple headers used for basic benchmarking, always in verbose
  *  \param logger the instance of seriallogwriter to use
  *  \param log_type inserts the name of the log into header
  *  \param samples inserts amount of samples into header
@@ -155,5 +155,5 @@ void PrintSimpleHeader(SerialLogWriter *logger, const char *log_type,
   char samples_str[15];
   snprintf(samples_str, 15, "%d", samples);
   Header headers[2] = {{"log_type", log_type}, {"samples", samples_str}};
-  logger->PrintHeaders(headers, 2);
+  logger->PrintHeaders(headers, 2, true);
 }

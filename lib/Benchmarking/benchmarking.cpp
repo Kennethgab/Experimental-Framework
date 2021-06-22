@@ -90,13 +90,37 @@ SimpleBenchmarker::SimpleBenchmarker() : logger()
  * \param samples amount of samples to execute
  *
  */
+
 SimpleBenchmarker::SimpleBenchmarker(SerialLogWriter logger,
                                      bool verbose_sampling, size_t samples)
 {
   this->verbose_sampling = verbose_sampling;
   this->logger = logger;
   this->samples = samples;
+  if (!verbose_sampling)
+  {
+    LogOnlyAverage(true, "all");
+  }
 };
+
+void SimpleBenchmarker::LogOnlyAverage(bool enabled, char *log_type)
+{
+  if (log_type = NULL)
+  {
+    log_type = "all";
+  }
+  this->verbose_sampling = !enabled;
+  if (enabled)
+  {
+    // used if not verbose sampling
+    char samples_str[15];
+    snprintf(samples_str, 15, "%d", samples);
+    Header aggregrate_headers[] = {{"log_type", "all"}, {"device", (char *)STR(BOARDTYPE)}, {"delimiter", this->logger.delimiter}, {"samples", samples_str}};
+    const char *aggregate_columns[] = {"primitive", "AVG time [microseconds]"};
+    this->logger.PrintHeaders(aggregrate_headers, 4, false);
+    this->logger.PrintRow(aggregate_columns, 2);
+  }
+}
 
 /** 
  * \brief Benchmarks a function with teardown, setup and setup_loop if necessary that 

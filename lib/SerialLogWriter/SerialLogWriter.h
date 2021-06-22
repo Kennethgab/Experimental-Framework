@@ -27,7 +27,7 @@ public:
   SerialLogWriter();
   SerialLogWriter(Header *default_header, size_t len, const char *delimiter);
   void PrintRow(const char **row, size_t len);
-  void PrintHeaders(Header *headers, size_t len);
+  void PrintHeaders(Header *headers, size_t len, bool print_default);
   void set_delimiter(const char *delimiter) { this->delimiter = delimiter; }
   void set_default_headers(Header *headers, size_t len);
 };
