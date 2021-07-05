@@ -11,4 +11,6 @@ This is the skeleton branch of the experimental framework, containing only neces
 
 # Usage
 
-The file main.cpp is self-documented as how to use the SimpleBenchmarker class.
+The file main.cpp is self-documented as how to use the SimpleBenchmarker class. Following similar setup will allow you to set up a benchmarked function.
+
+The data_treatment_theoretical pdf file shows the usage of the python part of the experimental framework. 
